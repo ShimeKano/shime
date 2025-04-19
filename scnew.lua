@@ -1,7 +1,8 @@
--- Tạo GUI và các nút như trước
+-- Tạo GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui
 
+-- Nút bật tắt farm
 local ToggleFarm = Instance.new("TextButton")
 ToggleFarm.Parent = ScreenGui
 ToggleFarm.Size = UDim2.new(0, 200, 0, 50)
@@ -9,7 +10,7 @@ ToggleFarm.Position = UDim2.new(0, 10, 0, 10)
 ToggleFarm.Text = "Bật Auto Farm"
 ToggleFarm.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
 
--- Tạo ComboBox chọn vũ khí
+-- Nút chọn vũ khí
 local WeaponDropdown = Instance.new("TextButton")
 WeaponDropdown.Parent = ScreenGui
 WeaponDropdown.Size = UDim2.new(0, 200, 0, 50)
@@ -17,14 +18,13 @@ WeaponDropdown.Position = UDim2.new(0, 10, 0, 70)
 WeaponDropdown.Text = "Chọn vũ khí"
 WeaponDropdown.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
 
--- Lấy các vũ khí trong backpack của người chơi
+-- Lấy tất cả vũ khí từ backpack
 local function getWeaponsFromBackpack()
     local weapons = {}
     local backpack = game.Players.LocalPlayer.Backpack
 
-    -- Duyệt qua các item trong backpack và lấy các vũ khí
+    -- Lấy các vũ khí trong backpack
     for _, item in pairs(backpack:GetChildren()) do
-        -- Giả sử vũ khí có tên chứa "Melee", "Kiếm", "Súng"
         if item:IsA("Tool") then
             table.insert(weapons, item.Name)
         end
@@ -32,7 +32,7 @@ local function getWeaponsFromBackpack()
     return weapons
 end
 
--- Hiển thị các item từ backpack trong ComboBox
+-- Hiển thị các vũ khí trong dropdown
 local function updateWeaponDropdown()
     local weapons = getWeaponsFromBackpack()
     if #weapons == 0 then
@@ -44,7 +44,6 @@ local function updateWeaponDropdown()
         dropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         dropdown.Parent = ScreenGui
 
-        -- Tạo các nút lựa chọn cho từng vũ khí
         for i, weapon in ipairs(weapons) do
             local weaponButton = Instance.new("TextButton")
             weaponButton.Size = UDim2.new(0, 200, 0, 40)
@@ -53,23 +52,22 @@ local function updateWeaponDropdown()
             weaponButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
             weaponButton.Parent = dropdown
 
-            -- Lựa chọn vũ khí khi click
             weaponButton.MouseButton1Click:Connect(function()
                 selectedWeapon = weapon
                 WeaponDropdown.Text = "Vũ khí: " .. selectedWeapon
-                dropdown:Destroy() -- Đóng dropdown sau khi chọn
+                dropdown:Destroy()
             end)
         end
     end
 end
 
--- Gọi hàm updateWeaponDropdown khi bắt đầu
+-- Cập nhật dropdown mỗi lần khởi tạo
 updateWeaponDropdown()
 
 -- Biến kiểm soát farm
 getgenv().AutoFarm = false
 
--- Hàm di chuyển
+-- Di chuyển đến vị trí mục tiêu
 function toPosition(pos)
     local ply = game.Players.LocalPlayer
     if ply.Character then
@@ -123,7 +121,7 @@ spawn(function()
     end)
 end)
 
--- Sự kiện bật/tắt farm
+-- Bật/tắt Auto Farm khi nhấn nút
 ToggleFarm.MouseButton1Click:Connect(function()
     getgenv().AutoFarm = not getgenv().AutoFarm
     ToggleFarm.Text = getgenv().AutoFarm and "Tắt Auto Farm" or "Bật Auto Farm"
